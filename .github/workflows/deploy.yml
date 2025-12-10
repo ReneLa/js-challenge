@@ -21,7 +21,7 @@ jobs:
                   port: 22
                   script: |
                     # Login to GHCR
-                    echo $GHCR_TOKEN | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+                    echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u renela --password-stdin
 
                     cd ~/app
                     docker compose pull
