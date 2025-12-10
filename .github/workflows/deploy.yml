@@ -18,8 +18,12 @@ jobs:
                   host: ${{ secrets.SERVER_HOST }}
                   username: ${{ secrets.SERVER_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 22
                   script: |
-                      cd ~/app
-                  #   docker compose pull
-                  #   docker compose up -d --remove-orphans
-                  #   docker system prune -f
+                    # Login to GHCR
+                    echo $GHCR_TOKEN | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+                    cd ~/app
+                    docker compose pull
+                    docker compose up -d --remove-orphans
+                    docker system prune -f
