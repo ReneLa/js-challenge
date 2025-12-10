@@ -38,6 +38,9 @@ jobs:
                 docker push ghcr.io/${{ env.DOCKER_IMAGE_PREFIX }}-backend:latest
 
             #----------- Frontend  ----------
+            - name: Copy proto files to frontend
+              run: cp backend/src/proto/user.proto frontend/public/proto/
+
             - name: Build Frontend image
               run: |
                 docker build -t ghcr.io/${{ env.DOCKER_IMAGE_PREFIX }}-frontend:latest ./frontend
