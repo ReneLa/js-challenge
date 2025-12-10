@@ -42,7 +42,10 @@ jobs:
               run: mkdir -p frontend/public/proto && cp backend/src/proto/user.proto frontend/public/proto/
 
             - name: Build Frontend image
-              run: docker build -t ghcr.io/${{ env.DOCKER_IMAGE_PREFIX }}-frontend:latest ./frontend
+              run: |
+                docker build \
+                  --build-arg NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }} \
+                  -t ghcr.io/${{ env.DOCKER_IMAGE_PREFIX }}-frontend:latest ./frontend
 
             - name: Push frontend Image
               run: |

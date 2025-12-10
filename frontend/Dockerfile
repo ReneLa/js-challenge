@@ -29,7 +29,14 @@ RUN corepack enable pnpm && pnpm run build
 # Runner stage (production)
 FROM base AS runner
 WORKDIR /app
+
+ARG NEXT_PUBLIC_API_URL
+
+
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
+RUN echo "The ENV variable values are $NEXT_PUBLIC_API_URL"
 
 # Create non-root user
 RUN addgroup --system --gid 1001 nodejs
