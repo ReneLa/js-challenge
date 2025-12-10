@@ -1,42 +1,41 @@
 # syntax=docker.io/docker/dockerfile:1
 
+# Base image
 FROM node:20-alpine AS base
 
-# Install dependencies only when needed
+# Dependencies stage
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy lockfile and package.json to install dependencies in the correct subdirectory
-COPY ./frontend/package.json ./frontend/pnpm-lock.yaml ./frontend/.npmrc* ./
+# Copy frontend package files
+COPY package.json pnpm-lock.yaml .npmrc* ./
 
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
-# Rebuild the source code only when needed
+# Builder stage
 FROM base AS builder
 WORKDIR /app
 
-# Copy dependency modules from the deps stage
+# Copy node_modules from deps
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy only the necessary source files for the frontend, NOT the entire project root
-COPY ./frontend .
+# Copy frontend source
+COPY . .
 
-# Copy the proto file
-COPY ./backend/src/proto/user.proto ./public/proto/
-
+# Build frontend
 RUN corepack enable pnpm && pnpm run build
 
-# Production image
+# Runner stage (production)
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
+# Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy the built standalone output and public files from the builder stage
-# This needs to be relative to the build context
+# Copy built app and public folder
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
