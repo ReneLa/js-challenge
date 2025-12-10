@@ -20,6 +20,8 @@ docker-compose up -d
 - Backend API: http://localhost:4000
 - API Docs: http://localhost:4000/docs
 
+- SSH : ssh -i "was-key.pem" ec2-user@ec2-56-228-18-25.eu-north-1.compute.amazonaws.com
+
 ## Local Development
 
 Want to run without Docker? Check out:
