@@ -19,7 +19,7 @@ jobs:
 
             - name: Set Docker image prefix
               run: |
-                echo "DOCKER_IMAGE_PREFIX=${GITHUB_REPOSITORY_OWNER,,}/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+                echo "DOCKER_IMAGE_PREFIX=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
             - name: Log in to GHCR
               uses: docker/login-action@v3
