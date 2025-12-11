@@ -24,16 +24,24 @@ const register = new client.Registry();
 client.collectDefaultMetrics({ register });
 
 const httpRequestDurationMicroseconds = new client.Histogram({
-  name: "http_request_duration_ms",
-  help: "Duration of HTTP requests in ms",
+  name: "http_request_duration_seconds",
+  help: "Duration of HTTP requests in seconds",
   labelNames: ["method", "route", "code"],
-  buckets: [50, 100, 200, 300, 400, 500, 1000] // buckets for response time
+  buckets: [0.1, 0.5, 1, 1.5]
 });
 register.registerMetric(httpRequestDurationMicroseconds);
 
 app.use(cors());
 app.use(express.json());
 
+// Track every request
+app.use((req, res, next) => {
+  const end = httpRequestDurationMicroseconds.startTimer();
+  res.on('finish', () => {
+    end({ method: req.method, route: req.path, code: res.statusCode });
+  });
+  next();
+});
 app.get("/", (req, res) => {
   res.send("API server is running. Visit /docs for API documentation.");
 });
