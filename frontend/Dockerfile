@@ -23,15 +23,15 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy frontend source
 COPY . .
 
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 # Build frontend
 RUN corepack enable pnpm && pnpm run build
 
 # Runner stage (production)
 FROM base AS runner
 WORKDIR /app
-
-ARG NEXT_PUBLIC_API_URL
-
 
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
