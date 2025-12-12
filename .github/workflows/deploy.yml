@@ -20,10 +20,10 @@ jobs:
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
                   port: 22
                   script: |
-                    # Login to GHCR
-                    echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u renela --password-stdin
+                      # Login to GHCR
+                      echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u renela --password-stdin
 
-                    cd ~/app
-                    docker compose pull
-                    docker compose up -d --remove-orphans
-                    docker system prune -f
+                      cd ~/app
+                      docker compose pull
+                      docker compose up -d --build --remove-orphans
+                      docker system prune -f
